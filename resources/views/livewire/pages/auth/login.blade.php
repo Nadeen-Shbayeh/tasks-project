@@ -21,7 +21,14 @@ new #[Layout('layouts.guest')] class extends Component
 
         Session::regenerate();
 
-        $this->redirectIntended(default: RouteServiceProvider::HOME, navigate: true);
+        
+        if (auth()->user()->is_admin) {
+            // Redirect to admin dashboard
+            $this->redirectIntended(default: RouteServiceProvider::Admin, navigate: true);
+        } else {
+            // Redirect to the user dashboard
+            $this->redirectIntended(default: RouteServiceProvider::User, navigate: true);
+        }
     }
 }; ?>
 

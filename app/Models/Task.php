@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models;
+use App\Models\User;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,10 +19,12 @@ class Task extends Model
         'end_date' => 'datetime',
     ];
 
+  
+
     public function users()
     {
-        return $this->belongsToMany(User::class, 'task_user')
-            ->withPivot('status')
-            ->withTimestamps();
+        return $this->belongsToMany(User::class);
     }
+
+
 }

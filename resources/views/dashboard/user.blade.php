@@ -13,6 +13,15 @@
 
                     <p class="mt-4">{{ __("You're logged in to your user dashboard.") }}</p>
 
+                    <div class="mt-6 space-y-4">
+                   
+                   <div class="container mx-auto mt-4">
+                       <livewire:user.task-management />
+                   </div>
+                
+             
+               </div>
+
          
                 </div>
             </div>

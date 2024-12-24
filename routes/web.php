@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Livewire\Admin\UserManagement;
+use App\Livewire\Admin\TaskManagement;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,8 +18,19 @@ use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome');
 
-Route::view('dashboard', 'dashboard')->middleware(['auth', 'verified'])->name('dashboard');
+// Admin dashboard route
+Route::get('/dashboard/admin', function () {
+    return view('dashboard.admin');
+})->middleware(['auth', 'verified', 'is_admin'])->name('dashboard.admin');
+
+
+// User dashboard route
+Route::get('/dashboard/user', function () {
+    return view('dashboard.user');
+})->middleware(['auth', 'verified'])->name('dashboard.user');
+
 
 Route::view('profile', 'profile')->middleware(['auth'])->name('profile');
 
 require __DIR__.'/auth.php';
+

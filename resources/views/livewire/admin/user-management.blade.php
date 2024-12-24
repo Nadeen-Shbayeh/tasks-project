@@ -1,90 +1,74 @@
-<div>
-    <div class="mb-4 flex justify-between">
-        <h2 class="text-2xl font-bold">Employee Management</h2>
-        <button wire:click="$set('showModal', true)" class="btn btn-primary">Add Employee</button>
-    </div>
+<div class="py-12">
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+        <!-- User List Section -->
+        <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+            <div class="max-w-xl">
+                <h2 class="text-2xl font-semibold text-gray-700">{{ __('User Management') }}</h2>
 
-    <div class="card">
-        <div class="card-body">
-            <table class="table" id="users-table">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Status</th>
-                        <th>Created At</th>
-                    </tr>
-                </thead>
-            </table>
-        </div>
-    </div>
-
-    {{-- Modal --}}
-    @if($showModal)
-    <div class="modal show" tabindex="-1" role="dialog" style="display: block;">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Add New Employee</h5>
-                    <button wire:click="$set('showModal', false)" class="close">&times;</button>
+                <!-- Button to toggle create form -->
+                <div class="mt-4">
+                    <button wire:click="toggleCreateForm" class="px-4 py-2 bg-blue-600 text-black rounded">
+                        {{ $createMode ? 'Cancel' : 'Create New User' }}
+                    </button>
                 </div>
-                <div class="modal-body">
-                    <form wire:submit.prevent="createUser">
-                        <div class="form-group">
-                            <label>Name</label>
-                            <input type="text" class="form-control" wire:model="name">
-                            @error('name') <span class="text-danger">{{ $message }}</span> @enderror
-                        </div>
 
-                        <div class="form-group">
-                            <label>Email</label>
-                            <input type="email" class="form-control" wire:model="email">
-                            @error('email') <span class="text-danger">{{ $message }}</span> @enderror
-                        </div>
+                <!-- Create User Form -->
+                @if($createMode)
+                    <div class="mt-6">
+                        <form wire:submit.prevent="store">
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="name" class="block text-sm font-medium text-gray-700">{{ __('Name') }}</label>
+                                    <input type="text" wire:model="name" id="name" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required />
+                                    @error('name') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                                </div>
 
-                        <div class="form-group">
-                            <label>Password</label>
-                            <input type="password" class="form-control" wire:model="password">
-                            @error('password') <span class="text-danger">{{ $message }}</span> @enderror
-                        </div>
+                                <div>
+                                    <label for="email" class="block text-sm font-medium text-gray-700">{{ __('Email') }}</label>
+                                    <input type="email" wire:model="email" id="email" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required />
+                                    @error('email') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                                </div>
 
-                        <div class="form-group">
-                            <label>Profile Image</label>
-                            <input type="file" class="form-control" wire:model="profile_image">
-                            @error('profile_image') <span class="text-danger">{{ $message }}</span> @enderror
-                        </div>
+                                <div>
+                                    <label for="password" class="block text-sm font-medium text-gray-700">{{ __('Password') }}</label>
+                                    <input type="password" wire:model="password" id="password" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required />
+                                    @error('password') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                                </div>
 
-                        <div class="form-group">
-                            <label>Status</label>
-                            <select class="form-control" wire:model="status">
-                                <option value="1">Active</option>
-                                <option value="0">Inactive</option>
-                            </select>
-                        </div>
+                                <div class="mt-4">
+                                    <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded">
+                                        {{ __('Create User') }}
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                @endif
 
-                        <button type="submit" class="btn btn-primary">Create</button>
-                    </form>
+                <!-- Table displaying users -->
+                <div class="mt-6">
+                    <table class="min-w-full bg-white shadow-md rounded-lg">
+                        <thead>
+                            <tr>
+                                <th class="px-4 py-2 text-left text-gray-600">{{ __('Name') }}</th>
+                                <th class="px-4 py-2 text-left text-gray-600">{{ __('Email') }}</th>
+                                <th class="px-4 py-2 text-left text-gray-600">{{ __('Actions') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($users as $user)
+                                <tr>
+                                    <td class="px-4 py-2">{{ $user->name }}</td>
+                                    <td class="px-4 py-2">{{ $user->email }}</td>
+                                    <td class="px-4 py-2">
+                                        <!-- Add action buttons for edit or delete if needed -->
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
-    @endif
 </div>
-
-@push('scripts')
-<script>
-$(function() {
-    $('#users-table').DataTable({
-        processing: true,
-        serverSide: true,
-        ajax: '{{ route("admin.users.data") }}',
-        columns: [
-            { data: 'name', name: 'name' },
-            { data: 'email', name: 'email' },
-            { data: 'status', name: 'status' },
-            { data: 'created_at', name: 'created_at' }
-        ]
-    });
-});
-</script>
-@endpush
